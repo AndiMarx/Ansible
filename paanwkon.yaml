@@ -50,5 +50,5 @@
   - debug: msg={{ anwkon.stdout }}
   - debug:
       var: anwkon
-  - debug: msg "Fehler File exists"
+  - debug: msg="Fehler File exists"
     when: ff.stat.exists
