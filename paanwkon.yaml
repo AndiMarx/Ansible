@@ -23,10 +23,15 @@
       path: "{{ data_path }}/D.FEHLER"
     register: ff
 
-  - name: check if D.ANWKONT Files are present
-    file:
+  - name: write to variable if file exists
+    stat:
       path: "{{ data_path }}/DAT.ANWKONT.*"
-      state: present
+    register: out
+    
+  - name: fail if D.ANWKONT Files are not present
+    fail:
+      msg: "{{ data_path }}/DAT.ANWKONT.* don not exist"
+    when: out.stat.exists == false
 
   - name: create jk file and content
     file:
