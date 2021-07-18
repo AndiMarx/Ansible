@@ -34,10 +34,10 @@
       - "{{ data_path }}/PASTLN02.VGLANW.210716.1"
     register: out    
     
-  - name: fails if D.ANWKONT Files are not present
-    fail:
-      msg: "{{ data_path }}/DAT.ANWKONT do not exist"
-    when: out.stat.exists == false
+ # - name: fails if D.ANWKONT Files are not present
+ #   fail:
+ #     msg: "{{ data_path }}/DAT.ANWKONT do not exist"
+ #   when: out.stat.exists == false
 
   - name: create jk file and content
     file:
