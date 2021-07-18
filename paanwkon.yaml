@@ -6,6 +6,7 @@
     data_path: /app/DANTE/data/pa2000
     jk_path: /app/DANTE/work/data/jk/pa2000
     cob_path: /app/DANTE/exec/bin/cob
+    
 
   tasks:
   - name: clear files
@@ -25,13 +26,13 @@
 
   - name: write to variable if file exists
     stat:
-      path: " {{ item }}"
-      with_items:
-      - "{{ data_path }}/DAT.ANWKONT.PAANX200"
-      - "{{ data_path }}/DAT.ANWKONT.PAANX300"
-      - "{{ data_path }}/DAT.ANWKONT.PAANX400"
-      - "{{ data_path }}/PASTLN02.VGLANW.210716.1"
-    register: out
+      path: " {{ item }}" 
+    loop:
+     - "{{ data_path }}/DAT.ANWKONT.PAANX200"
+     - "{{ data_path }}/DAT.ANWKONT.PAANX300"
+     - "{{ data_path }}/DAT.ANWKONT.PAANX400"
+     - "{{ data_path }}/PASTLN02.VGLANW.210716.1"
+     register: out    
     
   - name: fail if D.ANWKONT Files are not present
     fail:
