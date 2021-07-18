@@ -26,7 +26,7 @@
 
   - name: write to variable if file exists
     stat:
-      path: " {{ item }}" 
+      path: "{{ item }}" 
     loop:
       - "{{ data_path }}/DAT.ANWKONT.PAANX200"
       - "{{ data_path }}/DAT.ANWKONT.PAANX300"
