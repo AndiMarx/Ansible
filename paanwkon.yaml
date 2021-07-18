@@ -48,6 +48,7 @@
       DD_JKFILE: "{{ jk_path }}/app/DANTE/work/data/jk/pa2000/JK.PAANWKON"
     register: anwkon
   - debug: msg={{ anwkon.stdout }}
-  - debug: var=anwkon
+  - debug:
+      var: anwkon
   - debug: msg "Fehler File exists"
     when: ff.stat.exists
