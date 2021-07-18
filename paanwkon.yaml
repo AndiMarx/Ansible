@@ -19,9 +19,8 @@
       state: absent
 
   - name: check if D.FEHLER is present
-    file:
-      path: "{{ data_path }}/D.FEHLER"
-      state: present
+    stat: path: "{{ data_path }}/D.FEHLER"
+    register: ff
 
   - name: check if D.ANWKONT Files are present
     file:
@@ -50,6 +49,8 @@
     register: anwkon
   - debug: msg={{ anwkon.stdout }}
   - debug: var=anwkon
+  - debug: msg "Fehler File exists"
+    when: ff.stat.exists
 
 
    
