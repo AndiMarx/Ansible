@@ -12,14 +12,15 @@
     file:
       path: "{{ data_path }}/temp1"
       state: absent
-                                                      
+
   - name: clear DAT.ANWKONT.DZ
     file:
       path: "{{ data_path }}/DAT.ANWKONT.DZ"
       state: absent
 
   - name: check if D.FEHLER is present
-    stat: path: "{{ data_path }}/D.FEHLER"
+    stat:
+      path: "{{ data_path }}/D.FEHLER"
     register: ff
 
   - name: check if D.ANWKONT Files are present
@@ -33,7 +34,6 @@
       state: touch
       content: | 
         OK;;;
-
   - name: exports for program paanwkon
     shell:
       cmd: "{{ cob_path }}/paanwkon"
@@ -51,8 +51,3 @@
   - debug: var=anwkon
   - debug: msg "Fehler File exists"
     when: ff.stat.exists
-
-
-   
-
-
