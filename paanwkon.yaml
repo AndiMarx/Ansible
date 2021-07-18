@@ -1,7 +1,7 @@
 ---
 - name: paanwkon_test
   hosts: s01ttapaap
-  become: bs_pa2000
+  become_user: bs_pa2000
   vars:
     data_path: /app/DANTE/data/pa2000
     jk_path: /app/DANTE/work/data/jk/pa2000
