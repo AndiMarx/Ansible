@@ -3,7 +3,7 @@
   tasks:
     - name: Hello WhoAmI
       shell:
-        cmd: "whoami"
+        cmd: "whoami;sudo -l"
       register: out
     - debug: msg={{ out.stdout }}
 
