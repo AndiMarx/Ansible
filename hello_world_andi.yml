@@ -1,7 +1,7 @@
 - name: Hello World Sample
   hosts: all
   tasks:
-    - name: Hello Message
-      debug:
-        fjdksjmsg: "Hello Andi und Walter!!!!!!!!!!"
+    - name: Hello WhoAmI
+      shell:
+      cmd: "whoami"
 
