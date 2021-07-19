@@ -7,7 +7,7 @@
       register: out
     - debug: msg={{ out.stdout }}
     
-     - name: Hello sudo
+    - name: Hello sudo
       shell:
         cmd: "sudo -l"
       register: out2
