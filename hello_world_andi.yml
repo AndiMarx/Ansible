@@ -3,5 +3,5 @@
   tasks:
     - name: Hello WhoAmI
       shell:
-      cmd: "whoami"
+        cmd: "whoami"
 
