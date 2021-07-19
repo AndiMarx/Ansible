@@ -4,4 +4,6 @@
     - name: Hello WhoAmI
       shell:
         cmd: "whoami"
+      register: out
+    - debug: msg={{ out.stdout }}
 
