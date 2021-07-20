@@ -1,5 +1,6 @@
 ---
 - name: paanwkon_test
+  import_playbook: jobi.begin.pa2000.yaml
   hosts: s01ttapaap
   become_user: bs_pa2000
   become_method: sudo
