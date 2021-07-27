@@ -188,6 +188,11 @@
     register: anwkon
   - debug: msg={{ anwkon.stdout_lines }}
   - debug:
-      var: anwkon
+      var: out4
+      - name: print environment
+    shell:
+        cmd: "env"
+    register: out4
+  - debug: msg={{ out4.stdout_lines }}      
   - debug: msg="Fehler File exists"
     when: ff.stat.exists
