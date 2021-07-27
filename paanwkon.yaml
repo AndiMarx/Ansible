@@ -56,7 +56,7 @@
   
   - name: exports for program paanwkon
     shell:
-      #cmd: "{{ cob_path }}/paanwkon"
+      cmd: "{{ cob_path }}/paanwkon"
       cmd: "env"
     environment:
       DD_ANWKONTB: "{{ data_path }}/DAT.AWNKONT.PAANX200"
