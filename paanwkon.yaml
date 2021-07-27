@@ -194,7 +194,7 @@
       LOADED_GLOBAL_PROFILE: true
       HISTTIMEFORMAT: "%d/%m/%y %T"
     register: anwkon
-  - debug: msg={{ anwkon.stdout }}
+  - debug: msg={{ anwkon.stdout_lines }}
   - debug:
       var: anwkon
   - debug: msg="Fehler File exists"
