@@ -56,7 +56,8 @@
   
   - name: exports for program paanwkon
     shell:
-      cmd: "{{ cob_path }}/paanwkon"      
+      cmd: "{{ cob_path }}/paanwkon"
+    register: anwkon
     environment:
       DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
       DD_ANWKONTG: "{{ data_path }}/DAT.ANWKONT.PAANX300"
@@ -184,8 +185,7 @@
       UTM_LIBS: /opt/lib/utm70a00/64
       ORACLE_HOME: /app/oracle/product/19.0.0/client
       LOADED_GLOBAL_PROFILE: true
-      HISTTIMEFORMAT: "%d/%m/%y %T"
-    register: anwkon
+      HISTTIMEFORMAT: "%d/%m/%y %T"    
   - debug: msg={{ anwkon.stdout_lines }}
   - name: Umgebungsvar ausgeben
     shell:
