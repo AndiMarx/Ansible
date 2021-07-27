@@ -178,13 +178,13 @@
       HOME: /app/bs_pa2000
       LOGNAME: bs_pa2000
       CLASSPATH: /app/oracle/product/19.0.0/client/jlib
-      LESSOPEN: ||/usr/bin/lesspipe.sh %s
+      LESSOPEN: "||/usr/bin/lesspipe.sh %s"
       SERVERS: 0010.4000
       DISPLAY: localhost:0.0
       UTM_LIBS: /opt/lib/utm70a00/64
       ORACLE_HOME: /app/oracle/product/19.0.0/client
       LOADED_GLOBAL_PROFILE: true
-      HISTTIMEFORMAT: %d/%m/%y %T
+      HISTTIMEFORMAT: "%d/%m/%y %T"
     register: anwkon
   - debug: msg={{ anwkon.stdout }}
   - debug:
