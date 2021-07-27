@@ -8,10 +8,7 @@
     - name: Hello WhoAmI
       shell:
         cmd: "whoami"
-      register: out
-#      environment:
-#        DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
-#        DD_ANWKONTG: "{{ data_path }}/fksjflksjf"      
+      register: out      
     - debug: msg:{{ out.stdout }}
     
     - name: Hello sudo
