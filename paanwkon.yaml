@@ -47,6 +47,13 @@
       state: touch
       content: | 
         OK;;;
+        
+  - name: Hello WhoAmI
+    shell:
+        cmd: "whoami"
+    register: out
+  - debug: msg={{ out.stdout }}      
+  
   - name: exports for program paanwkon
     shell:
       cmd: "{{ cob_path }}/paanwkon"
