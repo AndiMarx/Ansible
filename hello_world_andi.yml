@@ -9,9 +9,9 @@
       shell:
         cmd: "whoami"
       register: out
-      environment:
-        DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
-        DD_ANWKONTG: "{{ data_path }}/fksjflksjf"      
+#      environment:
+#        DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
+#        DD_ANWKONTG: "{{ data_path }}/fksjflksjf"      
     - debug: msg:{{ out.stdout }}
     
     - name: Hello sudo
