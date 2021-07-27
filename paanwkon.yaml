@@ -187,9 +187,7 @@
       HISTTIMEFORMAT: "%d/%m/%y %T"
     register: anwkon
   - debug: msg={{ anwkon.stdout_lines }}
-  - debug:
-      var: out4
-      - name: print environment
+  - name: Umgebungsvar ausgeben
     shell:
         cmd: "env"
     register: out4
