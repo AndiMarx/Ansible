@@ -186,4 +186,4 @@
       ORACLE_HOME: /app/oracle/product/19.0.0/client
       LOADED_GLOBAL_PROFILE: true
       HISTTIMEFORMAT: "%d/%m/%y %T"    
-  - debug: msg={{ anwkon.stdout_lines }}
+  - debug: msg={{ anwkon.stdout }}
