@@ -58,9 +58,9 @@
     shell:
       cmd: "{{ cob_path }}/paanwkon"      
     environment:
-      DD_ANWKONTB: "{{ data_path }}/DAT.AWNKONT.PAANX200"
+      DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
       DD_ANWKONTG: "{{ data_path }}/DAT.ANWKONT.PAANX300"
-      DD_ANWKONTA: "{{ data_path }}/DAT.AWNKONT.PAANX400"
+      DD_ANWKONTA: "{{ data_path }}/DAT.ANWKONT.PAANX400"
       DD_ANWPASTL: "{{ data_path }}/PASTLN02.VGLANW.210716.1"
       DD_FEHLER: "{{ data_path }}/D.FEHLER"
       DD_ANWRZDZ: "{{ data_path }}/DAT.ANWKONT.DZ"
