@@ -58,7 +58,6 @@
     shell:
       cmd: "{{ cob_path }}/paanwkon"
     register: anwkon
-  - debug: msg={{ anwkon.stdout_lines }}
     environment:
       DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
       DD_ANWKONTG: "{{ data_path }}/DAT.ANWKONT.PAANX300"
@@ -187,5 +186,4 @@
       ORACLE_HOME: /app/oracle/product/19.0.0/client
       LOADED_GLOBAL_PROFILE: true
       HISTTIMEFORMAT: "%d/%m/%y %T"    
-    - debug: msg="Fehler File exists"
-    when: ff.stat.exists
+  - debug: msg={{ anwkon.stdout_lines }}
