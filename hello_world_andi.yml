@@ -7,11 +7,11 @@
       shell:
         cmd: "whoami"
       register: out
-    - debug: msg={{ out.stdout }}
+    - debug: msg:{{ out.stdout }}
     
     - name: Hello sudo
       shell:
         cmd: "sudo -l"
       register: out2
-    - debug: msg={{ out2.stdout }}
+    - debug: msg:{{ out2.stdout }}
 
