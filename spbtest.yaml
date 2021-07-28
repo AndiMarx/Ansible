@@ -16,6 +16,7 @@
       shell:
         cmd: "env"
       register: sout
-      debug: msg={{ sout.stdout }}
       environment:
         DD_ANWKONTA: "DAT.ANWKONT.PAANX200"
+      debug: msg={{ sout.stdout }}
+      
