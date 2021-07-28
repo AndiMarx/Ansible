@@ -1,0 +1,21 @@
+---
+- name: SpbTest1
+  hosts: s01ttapaap
+  become_user: bs_pa2000
+  become_method: sudo
+  vars:
+    text: "Ausgabe von Job SpbTest1"
+
+  tasks:
+    - name: Print Userid
+      shell: 
+        cmd: "whoami"
+      register: out
+      debug: msg={{ out.stdout }}
+    - name: show umgebung
+      shell:
+        cmd: "env"
+      register: sout
+      debug: msg={{ sout.stdout }}
+      environment:
+      DD_ANWKONTA: "DAT.ANWKONT.PAANX200"
