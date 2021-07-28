@@ -11,12 +11,12 @@
       shell: 
         cmd: "whoami"
       register: out
-      debug: msg={{ out.stdout }}
+    - debug: msg={{ out.stdout }}
     - name: show umgebung
       shell:
         cmd: "env"
       register: sout
       environment:
         DD_ANWKONTA: "DAT.ANWKONT.PAANX200"
-      debug: msg={{ sout.stdout }}
+    - debug: msg={{ sout.stdout }}
       
