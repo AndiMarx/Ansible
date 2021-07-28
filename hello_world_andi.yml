@@ -1,6 +1,8 @@
 - name: Hello World Sample
   hosts: s01ttapaap
   become_user: bs_pa2000
+  vars:
+    data_path: /app/DANTE/data/pa2000
 
   tasks:
     - name: Hello WhoAmI
@@ -8,6 +10,7 @@
         cmd: "whoami"
       register: out
       environment:
+        DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
         HOSTNAME: "s01ttapaap"
     - debug: msg={{ out.stdout }} 
 
