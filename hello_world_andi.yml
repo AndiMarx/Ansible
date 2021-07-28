@@ -7,5 +7,7 @@
       shell:
         cmd: "whoami"
       register: out
+      environment:
+        HOSTNAME: "s01ttapaap"
     - debug: msg={{ out.stdout }} 
 
