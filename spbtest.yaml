@@ -7,7 +7,7 @@
     text: "Ausgabe von Job SpbTest1"
 
   tasks:
-    - name: Print Userid
+    - name: Show Userid
       shell: 
         cmd: "whoami"
       register: out
@@ -18,4 +18,4 @@
       register: sout
       debug: msg={{ sout.stdout }}
       environment:
-      DD_ANWKONTA: "DAT.ANWKONT.PAANX200"
+        DD_ANWKONTA: "DAT.ANWKONT.PAANX200"
