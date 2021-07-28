@@ -1,5 +1,5 @@
 - name: Hello World Sample
-  hosts: all
+  hosts: s01ttapaap
   become_user: bs_pa2000
 
   tasks:
