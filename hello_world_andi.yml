@@ -12,8 +12,7 @@
         cmd: "whoami"
       register: out
       environment:
-        DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
-        HOSTNAME: "s01ttapaap"
+        DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"        
         DD_ANWKONTG: "{{ data_path }}/DAT.ANWKONT.PAANX300"
         DD_ANWKONTA: "{{ data_path }}/DAT.ANWKONT.PAANX400"
         DD_ANWPASTL: "{{ data_path }}/PASTLN02.VGLANW.210716.1"
@@ -22,5 +21,23 @@
         DD_HREZDZ: "{{ data_path }}/DAT.ANWKONT.HREZDZ.xml"
         DD_JKFILE: "{{ jk_path }}/app/DANTE/work/data/jk/pa2000/JK.PAANWKON"
         HOSTNAME: "$(hostname)"
+        userprof: "./.bash_profile"
+        globprof: "/app/DANTE/.global_profile"
+        HOSTNAME: "s01ttapaap"
+        DD_SYSLST: ">cat >> /app/DANTE/data/rzmeld/${avb_job_namework}.L.`date +%y%m%d`.`date +%H%M%S`.0001569603"
+        avb_syslst_path: "$(echo $DD_SYSLST|cut -c9-)"
+        DD_LOGFILE: "${avb_syslst_path}.log"
+        SHARK_SYS_ACT_CLIENT: "0300"
+        ORACLE_BASE: "/app/oracle/product/19.0.0"
+        ORACLE_SID: "PA_BMTST"
+        ORACLE_HOME: "$ORACLE_BASE/client"
+        NLS_LANG: "GERMAN_GERMANY.WE8ISO8859P15"
+        NLS_CHARACTERSET: "WE8ISO8859P15"
+        NLS_SORT: "BINARY"
+        LD_LIBRARY_PATH: "$ORACLE_HOME/lib:${LD_LIBRARY_PATH}"
+        CLASSPATH: "$ORACLE_HOME/jlib"
+        PATH: "$PATH:$ORACLE_HOME/bin:$ORACLE_HOME/lib:$ORACLE_HOME/OPatch"
+        DISPLAY: "localhost:0.0"
+        HOMEDB: "PVA"
     - debug: msg={{ out.stdout }} 
 
