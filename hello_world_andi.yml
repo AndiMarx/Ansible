@@ -1,16 +1,11 @@
 - name: Hello World Sample
   hosts: all
   become_user: bs_pa2000
-  become_method: sudo
+
   tasks:
     - name: Hello WhoAmI
       shell:
         cmd: "whoami"
       register: out
-    - debug: msg:{{ out.stdout }}
-    
-    - name: Hello sudo
-      shell:
-        cmd: "sudo -l"
-      register: out2
-    - debug: msg:{{ out2.stdout }}
+    - debug: msg={{ out.stdout }} 
+
