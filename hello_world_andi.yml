@@ -3,6 +3,8 @@
   become_user: bs_pa2000
   vars:
     data_path: /app/DANTE/data/pa2000
+    jk_path: /app/DANTE/work/data/jk/pa2000
+    cob_path: /app/DANTE/exec/bin/cob
 
   tasks:
     - name: Hello WhoAmI
@@ -12,5 +14,13 @@
       environment:
         DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
         HOSTNAME: "s01ttapaap"
+        DD_ANWKONTG: "{{ data_path }}/DAT.ANWKONT.PAANX300"
+        DD_ANWKONTA: "{{ data_path }}/DAT.ANWKONT.PAANX400"
+        DD_ANWPASTL: "{{ data_path }}/PASTLN02.VGLANW.210716.1"
+        DD_FEHLER: "{{ data_path }}/D.FEHLER"
+        DD_ANWRZDZ: "{{ data_path }}/DAT.ANWKONT.DZ"
+        DD_HREZDZ: "{{ data_path }}/DAT.ANWKONT.HREZDZ.xml"
+        DD_JKFILE: "{{ jk_path }}/app/DANTE/work/data/jk/pa2000/JK.PAANWKON"
+        HOSTNAME: "$(hostname)"
     - debug: msg={{ out.stdout }} 
 
