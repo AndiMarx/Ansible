@@ -1,5 +1,9 @@
 ---
 - name: wait for file spbtest
+  hosts: s01ttapaap
+  strategy: debug
+  become_user: bs_pa2000
+  become_method: sudo
     path: /tmp/spbtest.txt
     delay: 10
     sleep: 60
