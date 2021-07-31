@@ -76,7 +76,7 @@
       ORACLE_HOME: /app/oracle/product/19.0.0/client
       LOADED_GLOBAL_PROFILE: "true"
       HOMEDB: PVA
-      __SESAM_PROPERTY_PATH: /app/DANTE/exec/conf
+      __SESAM_PROPERTY_PATH: /app/DANTE/exec/conf/0002.sesam.properties.pa2000
   - debug:
       msg: "{{ pafrx999 }}"
       verbosity: 4
