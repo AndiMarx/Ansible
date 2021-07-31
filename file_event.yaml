@@ -4,6 +4,7 @@
   strategy: debug
   become_user: bs_pa2000
   become_method: sudo
+- wait_for:
     path: /tmp/spbtest.txt
     delay: 10
     sleep: 60
