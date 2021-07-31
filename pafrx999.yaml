@@ -40,7 +40,11 @@
   
   - name: run cobol program pafrx999
     #command: "echo "{{ tag }} | {{ cob_path }}/pafrx999"
-    command: "{{ cob_path }}/pafrx999 <<EOF;{{ tag }};EOF"
+    command: 
+      argv:
+        - "{{ cob_path }}/pafrx999"
+        - {{ tag }}
+    
     register: pafrx999
     environment: 
       DD_PASEBEIN: "{{ data_path }}/dat.pafrist.gruppen.line"
