@@ -96,7 +96,8 @@
       msg: "{{ output2 }}"
         
   - name: rebuild index file with cobol utility
-    command: "rebuild dat.pafrist.gruppen.line,DAT.PAFRIST.GRUPPEN -k:1+2 -r:F35 -o:lseq,ind"
+    #command: "rebuild dat.pafrist.gruppen.line,DAT.PAFRIST.GRUPPEN -k:1+2 -r:F35 -o:lseq,ind"
+    command: pwd
     args:
       chdir: "{{ data_path }}"
     register: rebuild
