@@ -101,5 +101,7 @@
     args:
       chdir: "{{ data_path }}"
     register: rebuild
+    environment:
+      PATH: ".:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/app/oracle/product/19.0.0/client/bin:/app/oracle/product/19.0.0/client/lib:/app/oracle/product/19.0.0/client/OPatch:/opt/microfocus/VisualCOBOL/bin:/usr/bin:/usr/local/bin:/app/DANTE/exec/bin/unix_scripts/:/app/bs_pa2000/.local/bin:/app/bs_pa2000/bin:/app/oracle/product/19.0.0/client/bin:/app/oracle/product/19.0.0/client/lib:/app/oracle/product/19.0.0/client/OPatch:/opt/microfocus/VisualCOBOL/bin:/usr/bin:/usr/local/bin:/app/DANTE/exec/bin/unix_scripts/"  
   - debug:
       msg: "{{ rebuild }}"
