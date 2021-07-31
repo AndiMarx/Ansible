@@ -18,7 +18,7 @@
 
   - name: clear dat.pafrist.gruppen
     file:
-      path: "{{ data_path }}/dat.pafrist.gruppen*
+      path: "{{ data_path }}/dat.pafrist.gruppen*"
       state: absent
 
   - name: clear dat.pafrist.gruppen.line
