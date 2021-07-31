@@ -84,9 +84,9 @@
     file:
       path: "{{ data_path }}/dat.pafrist.gruppen.line"
       state: present
-  - name: rebuild index file with cobol utility
-      command: "rebuild dat.pafrist.gruppen.line,DAT.PAFRIST.GRUPPEN -k:1+2 -r:F35 -o:lseq,ind"
-      register: rebuild  
+  #- name: rebuild index file with cobol utility
+  #    command: "rebuild dat.pafrist.gruppen.line,DAT.PAFRIST.GRUPPEN -k:1+2 -r:F35 -o:lseq,ind"
+  #    register: rebuild  
   - debug:
       msg: "{{ rebuild }}"
   - name: check if ISAM File DAT.PAFRIST.GRUPPEN exists
