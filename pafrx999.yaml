@@ -41,7 +41,7 @@
   - name: run cobol program pafrx999
     #command: "echo "{{ tag }} | {{ cob_path }}/pafrx999"
     command: "{{ cob_path }}/pafrx999"
-      stdin: "{{ tag }}"
+    stdin: "{{ tag }}"
     
     register: pafrx999
     environment: 
