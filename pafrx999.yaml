@@ -80,17 +80,17 @@
       verbosity: 4
       
   - name: check if output file exists
-    file:
-      path: "{{ data_path }}/dat.pafrist.gruppen.line"
-      state: present  
-    register: rebuild  
+    stat:    
+    register: output1  
   - debug:
-      msg: "{{ rebuild }}"
+      msg: "{{ output1 }}"
       
   - name: check if ISAM File DAT.PAFRIST.GRUPPEN exists
-    file:
+    stat:
       path: "{{ data_path }}/DAT.PAFRIST.GRUPPEN"
-      state: present
+      register: output2
+  - debug:
+      msg: "{{ output2 }}"
         
 #- name: rebuild index file with cobol utility
  #    command: "rebuild dat.pafrist.gruppen.line,DAT.PAFRIST.GRUPPEN -k:1+2 -r:F35 -o:lseq,ind"
