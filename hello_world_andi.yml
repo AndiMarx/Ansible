@@ -55,7 +55,8 @@
   - debug: msg={{ out.stdout }}      
   
   - name: exports for program paanwkon
-    command: "{{ cob_path }}/paanwkon"
+    #command: "{{ cob_path }}/paanwkon"
+    command: "env"
     register: anwkon
     environment: 
       DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
