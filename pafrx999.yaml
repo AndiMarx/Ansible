@@ -78,6 +78,7 @@
   - debug:
       msg: "{{ pafrx999 }}"
       verbosity: 4
+      
   - name: check if output file exists
     file:
       path: "{{ data_path }}/dat.pafrist.gruppen.line"
@@ -85,6 +86,7 @@
     register: rebuild  
   - debug:
       msg: "{{ rebuild }}"
+      
   - name: check if ISAM File DAT.PAFRIST.GRUPPEN exists
     file:
       path: "{{ data_path }}/DAT.PAFRIST.GRUPPEN"
