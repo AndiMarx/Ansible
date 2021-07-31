@@ -58,7 +58,7 @@
     command: "{{ cob_path }}/paanwkon"
     register: anwkon
     environment: 
-	  NLS_SORT=BINARY
+      NLS_SORT=BINARY
       SYS_CONF_PATH=/app/DANTE/exec/conf
       NLS_CHARACTERSET=WE8ISO8859P15
       HOSTNAME=s01ttapaap
@@ -70,13 +70,13 @@
       OLDPWD=/app/bs_pa2000
       COBDIR=/opt/microfocus/VisualCOBOL
       USER=bs_pa2000
-      LD_LIBRARY_PATH=/opt/lib/utm70a00/64//sys:/app/oracle/product/19.0.0/client/lib:/opt/lib/utm70a00/64//sys:/app/oracle/product/19.0.0/client/lib:
-      LD_LIBRARY_PATH_64=/opt/lib/utm70a00/64//sys:/opt/lib/utm70a00/64//sys:
+      LD_LIBRARY_PATH="/opt/lib/utm70a00/64//sys:/app/oracle/product/19.0.0/client/lib:/opt/lib/utm70a00/64//sys:/app/oracle/product/19.0.0/client/lib:"
+      LD_LIBRARY_PATH_64="/opt/lib/utm70a00/64//sys:/opt/lib/utm70a00/64//sys:"
       ORACLE_SID=PA_TTST
       ORACLE_BASE=/app/oracle/product/19.0.0
       EXTFH=/app/DANTE/exec/conf/extfh.cfg
       LIBPATH=/opt/microfocus/VisualCOBOL/lib
-      PATH=.:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/app/oracle/product/19.0.0/client/bin:/app/oracle/product/19.0.0/client/lib:/app/oracle/product/19.0.0/client/OPatch:/opt/microfocus/VisualCOBOL/bin:/usr/bin:/usr/local/bin:/app/DANTE/exec/bin/unix_scripts/:/app/bs_pa2000/.local/bin:/app/bs_pa2000/bin:/app/oracle/product/19.0.0/client/bin:/app/oracle/product/19.0.0/client/lib:/app/oracle/product/19.0.0/client/OPatch:/opt/microfocus/VisualCOBOL/bin:/usr/bin:/usr/local/bin:/app/DANTE/exec/bin/unix_scripts/
+      PATH=".:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/app/oracle/product/19.0.0/client/bin:/app/oracle/product/19.0.0/client/lib:/app/oracle/product/19.0.0/client/OPatch:/opt/microfocus/VisualCOBOL/bin:/usr/bin:/usr/local/bin:/app/DANTE/exec/bin/unix_scripts/:/app/bs_pa2000/.local/bin:/app/bs_pa2000/bin:/app/oracle/product/19.0.0/client/bin:/app/oracle/product/19.0.0/client/lib:/app/oracle/product/19.0.0/client/OPatch:/opt/microfocus/VisualCOBOL/bin:/usr/bin:/usr/local/bin:/app/DANTE/exec/bin/unix_scripts/"
       FULLHOSTNAME=s01ttapaapcl2
       LANG=de_DE@euro
       EXTSHM=ON
