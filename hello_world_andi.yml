@@ -57,7 +57,8 @@
   
   - name: exports for program paanwkon
     #command: "{{ cob_path }}/paanwkon"
-    command: "/app/hsthome/02ud190j/spbtest2"
+    #command: "/app/hsthome/02ud190j/spbtest2"
+    command: "echo Andi"
     register: anwkon
     environment: 
       DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
