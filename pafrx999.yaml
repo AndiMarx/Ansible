@@ -43,7 +43,7 @@
     command: 
       argv:
         - "{{ cob_path }}/pafrx999"
-        - {{ tag }}
+        - "{{ tag }}"
     
     register: pafrx999
     environment: 
