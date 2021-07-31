@@ -67,6 +67,7 @@
       DD_FEHLER: "{{ data_path }}/D.FEHLER"
       DD_ANWRZDZ: "{{ data_path }}/DAT.ANWKONT.DZ"
       DD_HREZDZ: "{{ data_path }}/DAT.ANWKONT.HREZDZ.xml"
+      DD_SYSLST: "{{ data_path }}/SYSLST.PAANWKON"
       NLS_SORT: BINARY
       SYS_CONF_PATH: "/app/DANTE/exec/conf"
       NLS_CHARACTERSET: WE8ISO8859P15
@@ -99,3 +100,8 @@
   - debug:
       msg: "{{ anwkon }}"
       verbosity: 4
+      
+  - name: Cat Output
+    shell: cat {{ data_path }}/SYSLST.PAANWKON       
+    register: out
+  - debug: msg={{ out.stdout }}   
