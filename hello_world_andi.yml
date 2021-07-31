@@ -107,7 +107,7 @@
     # ASSENTIS_USER: "APP_DANTE"
    #  ASSENTIS_PWD: "danteapp"
    #  COBDIR: "/opt/microfocus/VisualCOBOL"      
-   #  LIBPATH: "$COBDIR/lib"      
+      LIBPATH: "$COBDIR/lib"      
    #  TMPDIR: "/app/cobtmp"
    #  LANG: "de_DE@euro"
    #  EXTFH: "/app/DANTE/exec/conf/extfh.cfg"
