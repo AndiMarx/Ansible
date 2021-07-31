@@ -1,0 +1,7 @@
+---
+- name: wait for file spbtest
+    path: /tmp/spbtest.txt
+    delay: 10
+    sleep: 60
+    search_regex: "spb war da"
+    
