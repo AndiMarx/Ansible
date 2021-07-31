@@ -80,7 +80,8 @@
       verbosity: 4
       
   - name: check if output file exists
-    stat:    
+    stat:  
+      path: "{{ data_path }}/dat.pafrist.gruppen.line"
     register: output1  
   - debug:
       msg: "{{ output1 }}"
@@ -88,7 +89,7 @@
   - name: check if ISAM File DAT.PAFRIST.GRUPPEN exists
     stat:
       path: "{{ data_path }}/DAT.PAFRIST.GRUPPEN"
-      register: output2
+    register: output2
   - debug:
       msg: "{{ output2 }}"
         
