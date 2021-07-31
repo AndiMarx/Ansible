@@ -78,7 +78,7 @@
       verbosity: 4
   - name: check if output file exists
     file:
-      path: "{{ data_path }}/dat.pafrist.gruppen.line
+      path: "{{ data_path }}/dat.pafrist.gruppen.line"
       state: present
   - name: rebuild index file with cobol utility
       command: "rebuild dat.pafrist.gruppen.line,DAT.PAFRIST.GRUPPEN -k:1+2 -r:F35 -o:lseq,ind"
