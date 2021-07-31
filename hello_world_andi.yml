@@ -56,11 +56,11 @@
   - debug: msg={{ out.stdout }}      
   
   - name: exports for program paanwkon
-    command: "{{ cob_path }}/paanwkon"
-    #command: "env"
+    #command: "{{ cob_path }}/paanwkon"
+    command: "/app/hsthome/02ud190j/spbtest1"
     register: anwkon
     environment: 
-      # DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
+      DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
       DD_ANWKONTG: "{{ data_path }}/DAT.ANWKONT.PAANX300"
       DD_ANWKONTA: "{{ data_path }}/DAT.ANWKONT.PAANX400"
       DD_ANWPASTL: "{{ data_path }}/PASTLN02.VGLANW.210716.1"
