@@ -1,6 +1,6 @@
 ---
 
-- name: paanwkon_test  
+- name: test_parallel  
   hosts: s01ttapaap
   strategy: free
   become_user: bs_pa2000
@@ -9,94 +9,9 @@
     data_path: /app/DANTE/data/pa2000
     jk_path: /app/DANTE/work/data/jk/pa2000
     cob_path: /app/DANTE/exec/bin/cob
-    
-
-  tasks:
-  - name: clear files
-    file:
-      path: "{{ data_path }}/temp1"
-      state: absent
-
-  - name: clear DAT.ANWKONT.DZ
-    file:
-      path: "{{ data_path }}/DAT.ANWKONT.DZ"
-      state: absent
-
-  - name: check if D.FEHLER is present
-    stat:
-      path: "{{ data_path }}/D.FEHLER"
-    register: ff
-
-  - name: write to variable if file exists
-    stat:
-      path: "{{ item }}" 
-    loop:
-      - "{{ data_path }}/DAT.ANWKONT.PAANX200"
-      - "{{ data_path }}/DAT.ANWKONT.PAANX300"
-      - "{{ data_path }}/DAT.ANWKONT.PAANX400"
-      - "{{ data_path }}/PASTLN02.VGLANW.210716.1"
-    register: out    
-    
- # - name: fails if D.ANWKONT Files are not present
- #   fail:
- #     msg: "{{ data_path }}/DAT.ANWKONT do not exist"
- #   when: out.stat.exists == false
-
-  - name: create jk file and content
-    file:
-      path: "{{ jk_path }}/JK.PAANWKON"
-      state: touch
-      content: | 
-        OK;;;
-        
+       
   - name: Hello WhoAmI
     shell:
-        cmd: "whoami"
+        cmd: "sleep 5"
     register: out
-  - debug: msg={{ out.stdout }}      
-  
-  - name: exports for program paanwkon
-    #command: "{{ cob_path }}/paanwkon"
-    #command: "/app/hsthome/02ud190j/spbtest2"
-    command: "echo Andi"
-    register: anwkon
-    environment: 
-      DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"
-      DD_ANWKONTG: "{{ data_path }}/DAT.ANWKONT.PAANX300"
-      DD_ANWKONTA: "{{ data_path }}/DAT.ANWKONT.PAANX400"
-      DD_ANWPASTL: "{{ data_path }}/PASTLN02.VGLANW.210716.1"
-      DD_FEHLER: "{{ data_path }}/D.FEHLER"
-      DD_ANWRZDZ: "{{ data_path }}/DAT.ANWKONT.DZ"
-      DD_HREZDZ: "{{ data_path }}/DAT.ANWKONT.HREZDZ.xml"
-      NLS_SORT: BINARY
-      SYS_CONF_PATH: "/app/DANTE/exec/conf"
-      NLS_CHARACTERSET: WE8ISO8859P15
-      HOSTNAME: s01ttapaap
-      SHELL: /bin/bash
-      TERM: xterm
-      HISTSIZE: 1000
-      TMPDIR: /app/cobtmp
-      NLS_LANG: GERMAN_GERMANY.WE8ISO8859P15
-      OLDPWD: /app/bs_pa2000
-      COBDIR: /opt/microfocus/VisualCOBOL
-      USER: bs_pa2000
-      LD_LIBRARY_PATH: "/opt/lib/utm70a00/64//sys:/app/oracle/product/19.0.0/client/lib:/opt/lib/utm70a00/64//sys:/app/oracle/product/19.0.0/client/lib:"
-      LD_LIBRARY_PATH_64: "/opt/lib/utm70a00/64//sys:/opt/lib/utm70a00/64//sys:"
-      ORACLE_SID: PA_TTST
-      ORACLE_BASE: /app/oracle/product/19.0.0
-      EXTFH: /app/DANTE/exec/conf/extfh.cfg
-      LIBPATH: /opt/microfocus/VisualCOBOL/lib
-      PATH: ".:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/puppetlabs/bin:/app/oracle/product/19.0.0/client/bin:/app/oracle/product/19.0.0/client/lib:/app/oracle/product/19.0.0/client/OPatch:/opt/microfocus/VisualCOBOL/bin:/usr/bin:/usr/local/bin:/app/DANTE/exec/bin/unix_scripts/:/app/bs_pa2000/.local/bin:/app/bs_pa2000/bin:/app/oracle/product/19.0.0/client/bin:/app/oracle/product/19.0.0/client/lib:/app/oracle/product/19.0.0/client/OPatch:/opt/microfocus/VisualCOBOL/bin:/usr/bin:/usr/local/bin:/app/DANTE/exec/bin/unix_scripts/"
-      FULLHOSTNAME: s01ttapaapcl2
-      LANG: de_DE@euro
-      EXTSHM: "ON"
-      HISTCONTROL: ignoredups
-      SHLVL: 1
-      HOME: /app/bs_pa2000
-      LOGNAME: bs_pa2000
-      CLASSPATH: /app/oracle/product/19.0.0/client/jlib
-      ORACLE_HOME: /app/oracle/product/19.0.0/client
-      LOADED_GLOBAL_PROFILE: "true"
-  - debug:
-      msg: "{{ anwkon }}"
-      verbosity: 4
+  - debug: msg={{ out.stdout }} 
