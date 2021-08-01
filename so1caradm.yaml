@@ -14,6 +14,6 @@
   tasks:
   - name: Check if win file exists
     win_file:
-      path: "C:\TestAndi.txt"
+      path: 'C:\TestAndi.txt'
       state: touch
   
