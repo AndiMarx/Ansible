@@ -10,7 +10,7 @@
     jk_path: /app/DANTE/work/data/jk/pa2000
     cob_path: /app/DANTE/exec/bin/cob
        
-  - name: Hello WhoAmI
+  - name: schlafen
     shell:
         cmd: "sleep 5"
     register: out
