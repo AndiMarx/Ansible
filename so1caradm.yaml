@@ -1,6 +1,6 @@
 ---
 
-- name: paanwkon_test  
+- name: windows_test  
   hosts: s01caradm
   strategy: debug
   #become_user: bs_pa2000
