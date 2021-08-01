@@ -1,7 +1,7 @@
 ---
 
 - name: paanwkon_test  
-  hosts: all
+  hosts: s01ttapaap
   strategy: free
   become_user: bs_pa2000
   become_method: sudo
