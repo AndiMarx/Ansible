@@ -12,7 +12,8 @@
     
 
   tasks:
-  - name: hello
-    file:
+  - name: Check if win file exists
+    win_file:
       path: "C:\Test.txt"
-      state: absent
+    register: myFile
+  - debug: msg={{ myFile }}
