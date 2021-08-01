@@ -9,7 +9,8 @@
     data_path: /app/DANTE/data/pa2000
     jk_path: /app/DANTE/work/data/jk/pa2000
     cob_path: /app/DANTE/exec/bin/cob
-       
+  
+  tasks:       
   - name: schlafen
     shell: "sleep 5"
     register: out
