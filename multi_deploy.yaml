@@ -2,9 +2,13 @@
 
 - name: multi_deploy_test  
   hosts: s01ttwaslb1
+  #hosts: s01ttapaap
   strategy: debug
   become_user: wasadmin
   become_method: sudo
+  #become_user: bs_pa2000
+  #become_method: sudo
+  
   vars:
     stage: s01ttwaslb1
     port: 8879
@@ -13,10 +17,11 @@
     was_password: "8hebngrwie!"
     was_temp: "/tmp/"
     was_war: fahrradpass-war-4.0.0.war
-
-  - name: create python script
-    file:
-      path: "{{ was_temp }}/deploy.py"
-      state: touch
-      content: | 
-        Hallihallo 
+    
+   tasks: 
+   - name: create python script
+     file:
+       path: "{{ was_temp }}/deploy.py"
+       state: touch
+       content: | 
+         Hallihallo 
