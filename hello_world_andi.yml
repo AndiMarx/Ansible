@@ -1,8 +1,8 @@
 ---
 
 - name: paanwkon_test  
-  hosts: s01ttapaap
-  strategy: debug
+  hosts: all
+  strategy: free
   become_user: bs_pa2000
   become_method: sudo
   vars:
