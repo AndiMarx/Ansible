@@ -627,17 +627,17 @@ saveAndSync()
     register: out
   - debug: msg={{ out.stdout }}      
   
-  - name: exports for program paanwkon
-    command: "{{ cob_path }}/paanwkon"
-    #command: "/app/hsthome/02ud190j/spbtest2"
-    register: anwkon
-    environment: 
-      DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"      
-  - debug:
-      msg: "{{ anwkon }}"
-      verbosity: 4
+  #- name: exports for program paanwkon
+  #  command: "{{ cob_path }}/paanwkon"
+ #   #command: "/app/hsthome/02ud190j/spbtest2"
+  #  register: anwkon
+ #   environment: 
+   #   DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"      
+  #- debug:
+  #    msg: "{{ anwkon }}"
+   #   verbosity: 4
       
-  - name: Cat Output
-    shell: cat {{ data_path }}/SYSLST.PAANWKON       
-    register: out
-  - debug: msg={{ out.stdout }}   
+  #- name: Cat Output
+  #  shell: cat {{ data_path }}/SYSLST.PAANWKON       
+  #  register: out
+ # - debug: msg={{ out.stdout }}   
