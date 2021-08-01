@@ -1,1 +1,47 @@
+---
 
+- name: paanwkon_test  
+  hosts: s01ttapaap
+  strategy: debug
+  become_user: bs_pa2000
+  become_method: sudo
+  vars:
+    stage: s01ewas
+    port: 8879
+    was_cluster: "WAS_Cluster01"
+    was_user: wasadmin
+    was_password: "6enwlwas!"
+    was_temp: /tmp
+    was_war: /tmp/fahrradpass-war-4.0.0.war
+    
+    # java -jar ARATools.jar arb -cmd execute "/app/IBM/WebSphere9/AppServer/profiles/wasDMgr01/bin/wsadmin.sh" -host s01ewas -port 8879 -user "wasadmin" -password "--10602DC2BA4E134363DBDD3FD8323D8171" -f "$UC4RB_WAS_TEMP_DIR/install0149481513.py"
+    
+    
+
+  - name: create python script
+    file:
+      path: "{{ was_temp }}/deploy.py"
+      state: touch
+      content: | 
+        OK;;;
+        
+  - name: Hello WhoAmI
+    shell:
+        cmd: "whoami"
+    register: out
+  - debug: msg={{ out.stdout }}      
+  
+  - name: exports for program paanwkon
+    command: "{{ cob_path }}/paanwkon"
+    #command: "/app/hsthome/02ud190j/spbtest2"
+    register: anwkon
+    environment: 
+      DD_ANWKONTB: "{{ data_path }}/DAT.ANWKONT.PAANX200"      
+  - debug:
+      msg: "{{ anwkon }}"
+      verbosity: 4
+      
+  - name: Cat Output
+    shell: cat {{ data_path }}/SYSLST.PAANWKON       
+    register: out
+  - debug: msg={{ out.stdout }}   
