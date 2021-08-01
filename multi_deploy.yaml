@@ -11,8 +11,8 @@
     was_cluster: "WAS_Cluster01"
     was_user: wasadmin
     was_password: "6enwlwas!"
-    was_temp: /tmp
-    was_war: /tmp/fahrradpass-war-4.0.0.war
+    was_temp: /tmp/
+    was_war: fahrradpass-war-4.0.0.war
     
     # java -jar ARATools.jar arb -cmd execute "/app/IBM/WebSphere9/AppServer/profiles/wasDMgr01/bin/wsadmin.sh" -host s01ewas -port 8879 -user "wasadmin" -password "--10602DC2BA4E134363DBDD3FD8323D8171" -f "$UC4RB_WAS_TEMP_DIR/install0149481513.py"
     
@@ -23,7 +23,603 @@
       path: "{{ was_temp }}/deploy.py"
       state: touch
       content: | 
-        OK;;;
+        import sys, string 
+
+
+def rf_trim_comma(str):
+    if str[:1] == ',':
+      str = str[1:len(str)]
+
+    if str[len(str)-1:] == ',':
+      str = str[:len(str)-1]
+
+    return str
+
+
+def rf_prep_str(val):
+    if val == None:
+        return None
+
+    i = len(val)
+    if i == 0:
+        return None
+
+    retval = val.strip()
+    retval = rf_trim_comma(retval)
+
+    j = len(retval)
+
+    if i != j:
+        retval = rf_prep_str(retval)
+
+    return retval
+
+
+def rf_prep_svrs_nodes(str1, str2):
+    arr1 = rf_prep_svrs(str1)
+    arr2 = rf_prep_svrs(str2)
+
+    if len(arr1) != len(arr2):
+        raise 'Unequal no. of elements in each string array'
+    else:
+        retarr = []
+        for item1, item2 in zip(arr1, arr2):
+            node_server = {"nodename": item2.strip(), "servername": item1.strip()}
+            retarr.append(node_server)
+        return retarr
+
+def rf_prep_svrs(str1):
+
+    if str1 == None:
+        return None
+
+    if len(str1) == 0:
+        return None
+
+    str1 = rf_prep_str(str1)
+    if str1 == None:
+        return []
+    arr1 = str1.split(',');
+
+    retarr = []
+    for item1 in arr1:
+       if len(item1.strip()) > 0:
+         retarr.append(item1.strip())
+
+    return retarr
+def to_t_f(str):
+    if str.lower() == 'yes' or str.lower() =='true':
+       str = 'true'
+    elif str.lower() == 'no' or str.lower() =='false':
+       str ='false'
+    # return original value if not Yes or No
+    return str
+
+def byte_array_to_string(arr):
+    str = ''
+    for b in arr:
+      str += chr(b)
+    return str
+
+def writeReport(m, filePath):
+    report_file = open(filePath,'w')
+    for list in m.items():
+      str = "%s#%s\n" % (list[0],list[1])
+      report_file.write( str )
+    report_file.close()
+
+def checkResourceExists(name, type):
+    if getMBean('/' + type + 's/' + name ) is None:
+      return false
+    else:
+      return true
+
+def checkAppExists(name):
+    found = false
+    try:
+      cd('/')
+      for app in cmo.getAppDeployments():
+        appName = app.getName()
+        cd('/AppDeployments/' + appName)
+        applicationName = get('ApplicationName')
+        if  applicationName == name:
+          found = true
+          break
+    except Exception:
+      return found
+    return found
+
+def getAppMBean(name,version):
+    mb = None
+    try:
+      cd('/')
+      for app in cmo.getAppDeployments():
+        appName = app.getName()
+        cd('/AppDeployments/' + appName)
+        applicationName = get('ApplicationName')
+        if  applicationName == name:
+          if  version == '':
+            mb = getMBean('/AppDeployments/' + appName)
+            break
+          else:
+            appVersion = get('VersionIdentifier')
+            if appVersion == version:
+              mb = getMBean('/AppDeployments/' + appName)
+              break
+    except Exception:
+      return mb
+    return mb
+
+  
+def getFileList(dir):
+    files = []
+    dirs = []
+    for file in os.listdir(dir):
+         if os.path.isdir(os.path.join(dir, file)):
+              dirs.append(os.path.join(dir, file))
+         if os.path.isfile(os.path.join(dir, file)):
+              files.append(os.path.join(dir, file))
+    for dir in dirs:
+         files.extend(getFileList(dir))
+  
+    return files
+  
+def getFilters(excludefilters):
+    excludefilter = excludefilters.split(',')
+    excludes = ArrayList()
+    line = ''
+    if(excludefilters != None and excludefilters.strip() != '' ):
+         for i in range(len(excludefilter)):
+              line = excludefilter[i].strip()
+              if line != None and line != '':
+                   regex = line
+                   if (regex.startswith('*')):
+                        regex = '.' + regex
+                   p = Pattern.compile(regex)
+                   excludes.add(p)
+  
+    return excludes
+  
+def filterFiles(files, excludefilters):
+    excludes = getFilters(excludefilters)
+    excludedfiles = []
+    for j in range(len(files)):
+         file = files[j]
+         for i in range(len(excludes)):
+              if excludes[i].matcher(String(file)).find():
+                   files[j] = None
+                   break
+  
+    return files
+  
+def writeFile(chars, file): 
+    fos = FileOutputStream(file) 
+    print 'Writing file %s using Encoding %s' % (file.getAbsolutePath(), 'UTF-8') 
+    writer = OutputStreamWriter(fos, 'UTF-8') 
+    fout = BufferedWriter(writer) 
+    fout.write(chars) 
+    fout.flush() 
+    fout.close() 
+  
+    return
+  
+def convertVarToPath(var):
+    path = ''
+    temps = var.split('/')
+    for temp in temps:
+         if temp.startswith('$'):
+              lidx = temp.find('(')
+              if lidx == -1:
+                   lidx = temp.find('{')
+              hidx = temp.find(')')
+              if hidx == -1:
+                   hidx = temp.find('}')
+              if lidx != -1 and hidx != -1:
+                   temp = temp[lidx+1:hidx]
+                   for entry in var_arrs:
+                        if temp == AdminConfig.showAttribute(entry, 'symbolicName'):
+                             temp = AdminConfig.showAttribute(entry, 'value')
+                             break
+                   if temp == 'CELL':
+                        temp = getCellName()
+              path += convertVarToPath(temp)
+         else:
+              path += temp + '/'
+  
+    return path
+  
+def getScopes():
+    scopes = []
+    scopes.append('/Cell:' + getCellName())
+  
+    nodes = listNodes()
+    for node in nodes:
+         #if not nodeIsUnmanaged(node):
+         scopes.append('/Node:' + node)
+         for (nodename,servername) in listAllAppServers():
+              #if nodename == node and getServerType(nodename,servername) == 'APPLICATION_SERVER':
+              scopes.append('/Node:' + node + '/Server:'+servername)
+  
+    clusters = listServerClusters()
+    for cluster in clusters:
+         scopes.append('/ServerCluster:' + cluster)
+    return scopes
+  
+def getApplicationPath(appname):
+    deployments = AdminConfig.getid('/Deployment:' + appname + '/')
+    appDeploy = AdminConfig.showAttribute(deployments, 'deployedObject')
+    binariesURL = AdminConfig.showAttribute(appDeploy, 'binariesURL')
+    mbeans = AdminControl.queryNames('WebSphere:*,type=AdminOperations').split(lf)
+    for bean in mbeans:
+        path =  AdminControl.invoke(bean, 'expandVariable', "[["+binariesURL+"]]")
+        if os.path.exists(os.path.normpath(path)):
+            return os.path.normpath(path)
+  
+    return 
+  
+def getsibqueues():
+    m = 'getsibqueues:'
+    sop(m, 'Begin.')
+    scopes = getScopes()
+    sibqueues = []
+    for scope in scopes:
+         id = AdminConfig.getid(scope)
+         rc = []
+         try:
+              rc = AdminTask.listSIBJMSQueues(id).split(lf)
+         except:
+              sop(m, 'Exception occurred at scope %s' % (id))
+         if len(rc) != 0:
+              sibqueues.extend(rc)
+  
+    sop(m, 'Exit return %s items' % (len(sibqueues)))
+    return sibqueues
+  
+def getsibtopics():
+    m = 'getsibtopics:'
+    sop(m, 'Begin.')
+    scopes = getScopes()
+    sibtopics = []
+    for scope in scopes:
+         id = AdminConfig.getid(scope)
+         rc = []
+         try:
+              rc = AdminTask.listSIBJMSTopics(id).split(lf)
+         except:
+              sop(m, 'Exception occurred at scope %s' % (id))
+         if len(rc) != 0:
+              sibtopics.extend(rc)
+  
+    return sibtopics
+  
+def getDSByJNDI(jndi):
+    if jndi == None or jndi == '':
+         return
+    for ds in datasources:
+         if ds != None and jndi == AdminConfig.showAttribute(ds, 'jndiName'):
+              return ds
+  
+    return
+  
+def getQueueByJNDI(jndi):
+    m = 'getQueueByJNDI:'
+    sop(m, 'Begin. jndi = %s' % (jndi))
+    if jndi == None or jndi == '':
+         sop(m, 'Exit.')
+         return
+    for queue in destinations:
+         if queue != None and queue != '':
+              type = ''
+              try:
+                   type = AdminConfig.showAttribute(queue, 'type')
+              except:
+                   sop(m, '%s is not GenericJMSDestination type' % (queue))
+              if type == 'QUEUE' and jndi == AdminConfig.showAttribute(queue, 'jndiName'):
+                   sop(m, 'Exit.')
+                   return queue
+    for queue in AdminConfig.list('WASQueue').split(lf):
+         if queue != None and queue != '' and jndi == AdminConfig.showAttribute(queue, 'jndiName'):
+              sop(m, 'Exit.')
+              return queue
+    for queue in AdminConfig.list('MQQueue').split(lf):
+         if queue != None and queue != '' and jndi == AdminConfig.showAttribute(queue, 'jndiName'):
+              sop(m, 'Exit.')
+              return queue
+    for queue in getsibqueues():
+         if queue != None and queue != '' and jndi == AdminConfig.showAttribute(queue, 'jndiName'):
+              sop(m, 'Exit.')
+              return queue
+  
+    sop(m, 'Exit.')
+    return
+  
+def getTopicByJNDI(jndi):
+    m = 'getTopicByJNDI:'
+    sop(m, 'Begin. jndi = %s' % (jndi))
+    if jndi == None or jndi == '':
+         sop(m, 'Exit.')
+         return
+    for topic in getsibtopics():
+         if topic != None and topic != '' and jndi == AdminConfig.showAttribute(topic, 'jndiName'):
+              sop(m, 'Exit.')
+              return topic
+    for topic in destinations:
+         if topic != None and topic != '':
+              type = ''
+              try:
+                   type = AdminConfig.showAttribute(topic, 'type')
+              except:
+                   sop(m, '%s is not GenericJMSDestination type' % (topic))
+              if type == 'TOPIC' and jndi == AdminConfig.showAttribute(topic, 'jndiName'):
+                   sop(m, 'Exit.')
+                   return topic
+    for topic in AdminConfig.list('WASTopic').split(lf):
+         if topic != None and topic != '' and jndi == AdminConfig.showAttribute(topic, 'jndiName'):
+              sop(m, 'Exit.')
+              return topic
+    for topic in AdminConfig.list('MQTopic').split(lf):
+         if topic != None and topic != '' and jndi == AdminConfig.showAttribute(topic, 'jndiName'):
+              sop(m, 'Exit.')
+              return topic
+  
+    sop(m, 'Exit.')
+    return
+  
+def getEnvVarByJNDI(jndi):
+    if jndi == None or jndi == '':
+         return
+    for entry in var_arrs:
+         if entry != None and entry != '' and jndi == AdminConfig.showAttribute(entry, 'symbolicName'):
+              return entry
+  
+    return
+  
+def zipFiles(files, path, archivepath, guid, retarr):
+    zip = ZipOutputStream(FileOutputStream(os.path.normpath(os.path.join(archivepath, guid, r'snap.zip'))))
+    for f in files:
+         if f != None:
+              if f[len(path)+1:] in retarr and os.path.isfile(f):
+                   jarFile = JarInputStream(FileInputStream(os.path.normpath(f)))
+                   jarEntry = jarFile.getNextJarEntry()
+                   while (jarEntry != None):
+                        entry = ZipEntry('Application' + f[len(path):] + '/' + jarEntry.getName())
+                        zip.putNextEntry(entry)
+                        if jarEntry.isDirectory() != True:
+                             buf = jarray.zeros(8192, 'b')
+                             ret = jarFile.read(buf)
+                             while (ret != -1):
+                                  zip.write(buf, 0, ret)
+                                  ret = jarFile.read(buf)
+                        zip.closeEntry()
+                        jarEntry = jarFile.getNextJarEntry()
+                   jarFile.close()
+              else:
+                   entry = ZipEntry('Application' + f[len(path):])
+                   zip.putNextEntry(entry)
+                   if (os.path.isdir(f) != True):
+                        buf = jarray.zeros(8192, 'b')
+                        fin = BufferedInputStream(FileInputStream(f))
+                        ret = fin.read(buf)
+                        while (ret != -1):
+                             zip.write(buf, 0, ret)
+                             ret = fin.read(buf)
+                        fin.close()
+                   zip.closeEntry()
+    zip.close()
+  
+    return
+  
+def asHex(buf):
+    strbuf = StringBuffer(len(buf) * 2)
+    for b in buf:
+         strbuf.append(HEXES[(b & 0xF0) >> 4]).append(HEXES[(b & 0x0F)])
+  
+    return strbuf.toString()
+  
+def calcHash(file, hashType):
+    buf = jarray.zeros(maxBlockSize, 'b')
+    md = MessageDigest.getInstance(hashType)
+    md.reset()
+    if (os.path.isfile(file)):
+         fin = BufferedInputStream(FileInputStream(file))
+         try:
+              size = fin.read(buf)
+              while (size != -1):
+                   md.update(buf, 0, size)
+                   size = fin.read(buf)
+         finally:
+              fin.close()
+    else:
+         md.update(String(file).getBytes(), 0, String(file).length())
+    hash = md.digest()
+  
+    return asHex(hash)
+  
+def calcZipHash(bytes, hashType):
+    md = MessageDigest.getInstance(hashType)
+    md.reset()
+    if (len(bytes) > maxBlockSize):
+         num = len(bytes)/maxBlockSize
+         odd = len(bytes) % maxBlockSize
+         for i in range(num):
+              md.update(bytes[i*maxBlockSize: (i+1)*maxBlockSize ], 0, maxBlockSize)
+         if odd > 0:
+              md.update(bytes[num*maxBlockSize:len(bytes)], 0, odd)
+    else:
+         md.update(bytes, 0, len(bytes))
+    hash = md.digest()
+  
+    return asHex(hash)
+  
+def calcJarHash(jar, entry, hashType):
+    filesize = 0
+    buf = jarray.zeros(maxBlockSize, 'b')
+    md = MessageDigest.getInstance(hashType)
+    md.reset()
+    if (entry.isDirectory() != True):
+        size = jar.read(buf)
+        while (size != -1):
+            filesize += size
+            md.update(buf, 0, size)
+            size = jar.read(buf)
+    else:
+        md.update(String(entry.getName()).getBytes(), 0, String(entry.getName()).length())
+    hash = md.digest()
+  
+    return asHex(hash), filesize
+  
+
+def _stringListToList(stringList):
+   if not (stringList.startswith( '[' ) and stringList.endswith( ']' )):
+       raise ' ERROR: stringList does not start and end with square brackets. stringList=%s' % ( stringList )
+
+   rc = []
+   stringList = stringList[1:(len(stringList) - 1)]
+   if stringList.find('"') >= 0:
+       index = stringList.find('"')
+       while index >= 0:
+           hindex = stringList.find('"', index+1, len(stringList))
+           if hindex >= 0:
+               temp = stringList[index:hindex+1]
+               rc.append(temp)
+               stringList = stringList.replace(temp, '')
+           index = stringList.find('"')
+       rc.extend(stringList.split())
+   else:
+       rc = stringList.split()
+
+   return rc
+
+
+def _getTargetsForApplication(appname, targettype):
+    m = 'getTargetsForApplication:'
+    sop(m,'Entry. appname=%s targettype=%s' % ( appname, targettype ))
+    # Check parameter.
+    if 'ClusteredTarget' != targettype and 'ServerTarget' != targettype:
+        raise m + ' ERROR. Parameter targettype must be ClusteredTarget or ServerTarget. actual=%s' % ( targettype )
+    rc = []
+    deployments = AdminConfig.getid('/Deployment:%s/' % ( appname ))
+    if (len(deployments) > 0) :
+        deploymentObj = AdminConfig.showAttribute(deployments, 'deployedObject')
+        rawTargetMappings = AdminConfig.showAttribute(deploymentObj, 'targetMappings')
+        targetMappingList = _stringListToList(rawTargetMappings)
+        rawDeploymentTargets = AdminConfig.showAttribute(deployments, 'deploymentTargets')
+        deploymentTargetList = _stringListToList(rawDeploymentTargets)
+        for targetMapping in targetMappingList:
+            targetMappingTarget = getObjectAttribute(targetMapping,'target')
+            if targetMappingTarget == None:
+              targetMappingTarget = ''
+            if 0 <= targetMappingTarget.find(targettype):
+                sop(m,'Match 1. TargetMapping has desired type. desired=%s actual=%s' % ( targettype, targetMappingTarget ))
+                for deploymentTarget in deploymentTargetList:
+                    current_deployment_target_name = getNameFromId(deploymentTarget)
+                    sop(m,'deploymentTarget=%s current_deployment_target_name=%s' % ( deploymentTarget, current_deployment_target_name ))
+                    if 0 <= deploymentTarget.find(targetMappingTarget):
+                        sop(m,'Match 2. Found associated deployment target. deploymentTarget=%s targetMappingTarget=%s' % ( deploymentTarget, targetMappingTarget ))
+                        if 'ClusteredTarget' == targettype:
+                            clusterName = getObjectAttribute(deploymentTarget,'name')
+                            sop(m,'Saving clusterName=%s' % ( clusterName ))
+                            rc.append( clusterName )
+                        else:
+                            serverName = getObjectAttribute(deploymentTarget,'name')
+                            nodeName = getObjectAttribute(deploymentTarget,'nodeName')
+                            sop(m,'Saving serverName=%s nodeName=%s' % ( serverName, nodeName ))
+                            rc.append( '%s,%s' % ( serverName, nodeName ))
+                    else:
+                        sop(m,'No match 2. Deployment target does not match. targetMappingTarget=%s deploymentTarget=%s' % ( targetMappingTarget, deploymentTarget ))
+            else:
+                sop(m,'No match 1. TargetMapping does not have desired type. desired=%s actual=%s' % ( targettype, targetMappingTarget ))
+    else:
+        sop(m, 'No deployments found.')
+    sop(m,'Exit. Returning list with %i elements: %s' % ( len(rc), repr(rc) ))
+    return rc
+
+
+def _startApplicationOnServer(appname,nodename,servername):
+    m = 'startApplicationOnServer:'
+    sop(m, 'Entry. appname=%s nodename=%s servername=%s' % ( appname,nodename,servername ))
+    cellname = getCellName()
+    # Get the application manager MBean
+    appManager = AdminControl.queryNames('cell=%s,node=%s,type=ApplicationManager,process=%s,*' %(cellname,nodename,servername))
+    sop(m,'appManager=%s' % ( repr(appManager) ))
+    # start it
+    rc = AdminControl.invoke(appManager, 'startApplication', "[["+appname+"]]")
+    sop(m,'Exit. rc=%s' % ( repr(rc) ))
+
+
+def _stopApplicationOnServer(appname,nodename,servername):
+    m = 'stopApplicationOnServer:'
+    sop(m,'Entry. appname=%s nodename=%s servername=%s' % ( appname,nodename,servername ))
+    cellname = getCellName()
+    # Get the application manager MBean
+    appManager = AdminControl.queryNames('cell=%s,node=%s,type=ApplicationManager,process=%s,*' %(cellname,nodename,servername))
+    sop(m,'appManager=%s' % ( repr(appManager) ))
+    # stop it
+    rc = AdminControl.invoke(appManager, 'stopApplication', "[["+appname+"]]")
+    sop(m,'Exit. rc=%s' % ( repr(rc) ))
+
+
+def _startApplicationOnCluster(appname,clustername):
+    m = 'startApplicationOnCluster:'
+    sop(m,'Entry. appname=%s clustername=%s' % ( appname, clustername ))
+    server_id_list = listServersInCluster( clustername )
+    for server_id in server_id_list:
+        nodename = AdminConfig.showAttribute( server_id, 'nodeName' )
+        servername = AdminConfig.showAttribute( server_id, 'memberName' )
+        sop(m, 'Starting application. application=%s cluster=%s node=%s server=%s' % (appname, clustername, nodename, servername) )
+        _startApplicationOnServer(appname,nodename,servername)
+    sop(m,'Exit.')
+
+
+def _stopApplicationOnCluster(appname,clustername):
+    m = 'stopApplicationOnCluster:'
+    sop(m,'Entry. appname=%s clustername=%s' % ( appname, clustername ))
+    server_id_list = listServersInCluster( clustername )
+    for server_id in server_id_list:
+        nodename = AdminConfig.showAttribute( server_id, 'nodeName' )
+        servername = AdminConfig.showAttribute( server_id, 'memberName' )
+        sop(m, 'Stopping application. application=%s cluster=%s node=%s server=%s' % (appname, clustername, nodename, servername) )
+        _stopApplicationOnServer(appname,nodename,servername)
+    sop(m,'Exit.')
+
+
+
+execfile('/app/IBM/WebSphere9/AppServer/profiles/wasDMgr01/bin/wsadminlib.py')
+
+run_install = False
+nodes_and_servers = None
+clusternames = None
+
+
+nodes_and_servers = rf_prep_svrs_nodes('webserver01','webserver1_node')
+
+run_install = True
+
+clusternames = ' {{ was_cluster }} '
+
+
+
+
+clusternames = rf_prep_svrs('{{ was_cluster }}')
+
+run_install = True
+
+
+options = ['-usedefaultbindings', '-defaultbinding.virtual.host', 'default_host', '-appname', ' {{ was_war }}'.strip()] 
+
+
+if run_install:
+  if nodes_and_servers == None:
+    nodes_and_servers = ''
+  if clusternames == None:
+    clusternames = ''
+  installApplication('{{ was_temp }}{{ was_war }}'.strip(), nodes_and_servers, clusternames, options)
+else:
+  print 'Neither servers-nodes or clusters are given, therefore the job finishes without doing anything'
+
+
+saveAndSync()
+
         
   - name: Hello WhoAmI
     shell:
