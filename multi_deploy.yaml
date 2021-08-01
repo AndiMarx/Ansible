@@ -11,7 +11,7 @@
     was_cluster: "WAS_Cluster01"
     was_user: wasadmin
     was_password: "8hebngrwie!"
-    was_temp: /tmp/
+    was_temp: "/tmp/"
     was_war: fahrradpass-war-4.0.0.war
 
   - name: create python script
