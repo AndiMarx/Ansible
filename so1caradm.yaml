@@ -1,1 +1,18 @@
+---
 
+- name: paanwkon_test  
+  hosts: s01caradm
+  strategy: debug
+  #become_user: bs_pa2000
+  #become_method: sudo
+  #vars:
+    #data_path: /app/DANTE/data/pa2000
+    #jk_path: /app/DANTE/work/data/jk/pa2000
+    #cob_path: /app/DANTE/exec/bin/cob
+    
+
+  tasks:
+  - name: hello
+    file:
+      path: "C:\Test.txt"
+      state: absent
