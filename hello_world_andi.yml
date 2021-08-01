@@ -11,7 +11,6 @@
     cob_path: /app/DANTE/exec/bin/cob
        
   - name: schlafen
-    shell:
-        cmd: "sleep 5"
+    shell: "sleep 5"
     register: out
   - debug: msg={{ out.stdout }} 
