@@ -405,6 +405,168 @@
                   md.update(String(file).getBytes(), 0, String(file).length())
              hash = md.digest()  
              return asHex(hash)
+             
+         def calcZipHash(bytes, hashType):
+             md = MessageDigest.getInstance(hashType)
+             md.reset()
+             if (len(bytes) > maxBlockSize):
+                  num = len(bytes)/maxBlockSize
+                  odd = len(bytes) % maxBlockSize
+                  for i in range(num):
+                       md.update(bytes[i*maxBlockSize: (i+1)*maxBlockSize ], 0, maxBlockSize)
+                  if odd > 0:
+                       md.update(bytes[num*maxBlockSize:len(bytes)], 0, odd)
+             else:
+                  md.update(bytes, 0, len(bytes))
+             hash = md.digest()  
+             return asHex(hash)
+             
+         def calcJarHash(jar, entry, hashType):
+             filesize = 0
+             buf = jarray.zeros(maxBlockSize, 'b')
+             md = MessageDigest.getInstance(hashType)
+             md.reset()
+             if (entry.isDirectory() != True):
+                 size = jar.read(buf)
+                 while (size != -1):
+                     filesize += size
+                     md.update(buf, 0, size)
+                     size = jar.read(buf)
+             else:
+                 md.update(String(entry.getName()).getBytes(), 0, String(entry.getName()).length())
+             hash = md.digest()  
+             return asHex(hash), filesize
+             
+         def _stringListToList(stringList):
+            if not (stringList.startswith( '[' ) and stringList.endswith( ']' )):
+                raise ' ERROR: stringList does not start and end with square brackets. stringList=%s' % ( stringList )
+            rc = []
+            stringList = stringList[1:(len(stringList) - 1)]
+            if stringList.find('"') >= 0:
+                index = stringList.find('"')
+                while index >= 0:
+                    hindex = stringList.find('"', index+1, len(stringList))
+                    if hindex >= 0:
+                        temp = stringList[index:hindex+1]
+                        rc.append(temp)
+                        stringList = stringList.replace(temp, '')
+                    index = stringList.find('"')
+                rc.extend(stringList.split())
+            else:
+                rc = stringList.split()
+            return rc
+            
+        def _getTargetsForApplication(appname, targettype):
+            m = 'getTargetsForApplication:'
+           sop(m,'Entry. appname=%s targettype=%s' % ( appname, targettype ))
+           # Check parameter.
+           if 'ClusteredTarget' != targettype and 'ServerTarget' != targettype:
+               raise m + ' ERROR. Parameter targettype must be ClusteredTarget or ServerTarget. actual=%s' % ( targettype )
+           rc = []
+           deployments = AdminConfig.getid('/Deployment:%s/' % ( appname ))
+           if (len(deployments) > 0) :
+               deploymentObj = AdminConfig.showAttribute(deployments, 'deployedObject')
+               rawTargetMappings = AdminConfig.showAttribute(deploymentObj, 'targetMappings')
+               targetMappingList = _stringListToList(rawTargetMappings)
+               rawDeploymentTargets = AdminConfig.showAttribute(deployments, 'deploymentTargets')
+               deploymentTargetList = _stringListToList(rawDeploymentTargets)
+               for targetMapping in targetMappingList:
+                   targetMappingTarget = getObjectAttribute(targetMapping,'target')
+                   if targetMappingTarget == None:
+                     targetMappingTarget = ''
+                   if 0 <= targetMappingTarget.find(targettype):
+                       sop(m,'Match 1. TargetMapping has desired type. desired=%s actual=%s' % ( targettype, targetMappingTarget ))
+                       for deploymentTarget in deploymentTargetList:
+                           current_deployment_target_name = getNameFromId(deploymentTarget)
+                           sop(m,'deploymentTarget=%s current_deployment_target_name=%s' % ( deploymentTarget, current_deployment_target_name ))
+                           if 0 <= deploymentTarget.find(targetMappingTarget):
+                               sop(m,'Match 2. Found associated deployment target. deploymentTarget=%s targetMappingTarget=%s' % ( deploymentTarget, targetMappingTarget ))
+                               if 'ClusteredTarget' == targettype:
+                                   clusterName = getObjectAttribute(deploymentTarget,'name')
+                                   sop(m,'Saving clusterName=%s' % ( clusterName ))
+                                   rc.append( clusterName )
+                               else:
+                                   serverName = getObjectAttribute(deploymentTarget,'name')
+                                   nodeName = getObjectAttribute(deploymentTarget,'nodeName')
+                                   sop(m,'Saving serverName=%s nodeName=%s' % ( serverName, nodeName ))
+                                   rc.append( '%s,%s' % ( serverName, nodeName ))
+                           else:
+                               sop(m,'No match 2. Deployment target does not match. targetMappingTarget=%s deploymentTarget=%s' % ( targetMappingTarget, deploymentTarget ))
+                   else:
+                       sop(m,'No match 1. TargetMapping does not have desired type. desired=%s actual=%s' % ( targettype, targetMappingTarget ))
+           else:
+               sop(m, 'No deployments found.')
+           sop(m,'Exit. Returning list with %i elements: %s' % ( len(rc), repr(rc) ))
+           return rc
+           
+       def _startApplicationOnServer(appname,nodename,servername):
+           m = 'startApplicationOnServer:'
+           sop(m, 'Entry. appname=%s nodename=%s servername=%s' % ( appname,nodename,servername ))
+           cellname = getCellName()
+           # Get the application manager MBean
+           appManager = AdminControl.queryNames('cell=%s,node=%s,type=ApplicationManager,process=%s,*' %(cellname,nodename,servername))
+           sop(m,'appManager=%s' % ( repr(appManager) ))
+           # start it
+           rc = AdminControl.invoke(appManager, 'startApplication', "[["+appname+"]]")
+           sop(m,'Exit. rc=%s' % ( repr(rc) ))
+           
+       def _stopApplicationOnServer(appname,nodename,servername):
+           m = 'stopApplicationOnServer:'
+           sop(m,'Entry. appname=%s nodename=%s servername=%s' % ( appname,nodename,servername ))
+           cellname = getCellName()
+           # Get the application manager MBean
+           appManager = AdminControl.queryNames('cell=%s,node=%s,type=ApplicationManager,process=%s,*' %(cellname,nodename,servername))
+           sop(m,'appManager=%s' % ( repr(appManager) ))
+           # stop it
+           rc = AdminControl.invoke(appManager, 'stopApplication', "[["+appname+"]]")
+           sop(m,'Exit. rc=%s' % ( repr(rc) ))
+           
+       def _startApplicationOnCluster(appname,clustername):
+           m = 'startApplicationOnCluster:'
+           sop(m,'Entry. appname=%s clustername=%s' % ( appname, clustername ))
+           server_id_list = listServersInCluster( clustername )
+           for server_id in server_id_list:
+               nodename = AdminConfig.showAttribute( server_id, 'nodeName' )
+               servername = AdminConfig.showAttribute( server_id, 'memberName' )
+               sop(m, 'Starting application. application=%s cluster=%s node=%s server=%s' % (appname, clustername, nodename, servername) )
+               _startApplicationOnServer(appname,nodename,servername)
+           sop(m,'Exit.')
+           
+       def _stopApplicationOnCluster(appname,clustername):
+           m = 'stopApplicationOnCluster:'
+           sop(m,'Entry. appname=%s clustername=%s' % ( appname, clustername ))
+           server_id_list = listServersInCluster( clustername )
+           for server_id in server_id_list:
+               nodename = AdminConfig.showAttribute( server_id, 'nodeName' )
+               servername = AdminConfig.showAttribute( server_id, 'memberName' )
+               sop(m, 'Stopping application. application=%s cluster=%s node=%s server=%s' % (appname, clustername, nodename, servername) )
+               _stopApplicationOnServer(appname,nodename,servername)
+           sop(m,'Exit.')
+           
+       
+       execfile('/app/IBM/WebSphere9/AppServer/profiles/wasDMgr01/bin/wsadminlib.py')
+       run_install = False
+       nodes_and_servers = None
+       clusternames = None
+       
+       nodes_and_servers = rf_prep_svrs_nodes('webserver01','webserver1_node')
+       run_install = True
+       clusternames = ' {{ was_cluster }} '
+       
+       clusternames = rf_prep_svrs('{{ was_cluster }}')
+       run_install = True
+       options = ['-usedefaultbindings', '-defaultbinding.virtual.host', 'default_host', '-appname', ' {{ was_war }}'.strip()] 
+       
+       if run_install:
+         if nodes_and_servers == None:
+           nodes_and_servers = ''
+         if clusternames == None:
+           clusternames = ''
+         installApplication('{{ was_temp }}{{ was_war }}'.strip(), nodes_and_servers, clusternames, options)
+       else:
+         print 'Neither servers-nodes or clusters are given, therefore the job finishes without doing anything'
+
+
 
     
     
