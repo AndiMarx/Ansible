@@ -28,10 +28,10 @@
         
   tasks: 
   - name: create python script
-    copy:
-      dest: "{{ was_temp }}/deploy.py"      
-      content: | 
-        import sys, string 
+  blockinfile:
+    dest: "{{ was_temp }}/deploy.py" 
+    block: |
+      import sys, string 
 
 
 def rf_trim_comma(str):
