@@ -16,6 +16,7 @@
     was_user: wasadmin
     was_password: "8hebngrwie!"
     was_temp: "/tmp"
+    py_temp: "/tmp/deploy.py"
     was_war: fahrradpass-war-4.0.0.war
     mytext: |
       import sys, string
@@ -25,6 +26,6 @@
          
   tasks: 
   - copy: create python script  
-      dest: "{{ was_temp }}"/deploy.py 
+      dest: "{{ py_temp }}"
       content: "{{ mytext }}"
     
