@@ -17,23 +17,14 @@
     was_password: "8hebngrwie!"
     was_temp: "/tmp"
     was_war: fahrradpass-war-4.0.0.war
+    mytext: |
+      import sys, string
+      def rf_trim_comma(str):
+    
     
          
   tasks: 
-  - name: create python script
-  blockinfile:
-    dest: "{{ was_temp }}/deploy.py" 
-    block: |
-      import sys, string
-def rf_trim_comma(str):
-    if str[:1] == ',':
-      str = str[1:len(str)]
-    if str[len(str)-1:] == ',':
-      str = str[:len(str)-1]
-    return str
-def rf_prep_str(val):
-    if val == None:
-        return None
-    i = len(val)
-    if i == 0:
-        return None   
+  - copy: create python script  
+      dest: "{{ was_temp }}/deploy.py" 
+      content: "{{ mytext }}"
+    
