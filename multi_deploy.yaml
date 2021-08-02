@@ -25,7 +25,8 @@
     
          
   tasks: 
-  - copy: create python script  
+  - name: create python script
+    copy:
       dest: "{{ py_temp }}"
       content: "{{ mytext }}"
     
