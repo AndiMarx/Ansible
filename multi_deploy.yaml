@@ -210,6 +210,135 @@
                 else:
                      path += temp + '/'  
            return path
+           
+       def getScopes():
+           scopes = []
+           scopes.append('/Cell:' + getCellName())  
+           nodes = listNodes()
+           for node in nodes:
+                #if not nodeIsUnmanaged(node):
+                scopes.append('/Node:' + node)
+                for (nodename,servername) in listAllAppServers():
+                     #if nodename == node and getServerType(nodename,servername) == 'APPLICATION_SERVER':
+                     scopes.append('/Node:' + node + '/Server:'+servername)  
+           clusters = listServerClusters()
+           for cluster in clusters:
+                scopes.append('/ServerCluster:' + cluster)
+           return scopes
+           
+       def getApplicationPath(appname):
+           deployments = AdminConfig.getid('/Deployment:' + appname + '/')
+           appDeploy = AdminConfig.showAttribute(deployments, 'deployedObject')
+           binariesURL = AdminConfig.showAttribute(appDeploy, 'binariesURL')
+           mbeans = AdminControl.queryNames('WebSphere:*,type=AdminOperations').split(lf)
+           for bean in mbeans:
+               path =  AdminControl.invoke(bean, 'expandVariable', "[["+binariesURL+"]]")
+               if os.path.exists(os.path.normpath(path)):
+                   return os.path.normpath(path)  
+           return
+       
+       def getsibqueues():
+           m = 'getsibqueues:'
+           sop(m, 'Begin.')
+           scopes = getScopes()
+           sibqueues = []
+           for scope in scopes:
+                id = AdminConfig.getid(scope)
+                rc = []
+                try:
+                     rc = AdminTask.listSIBJMSQueues(id).split(lf)
+                except:
+                     sop(m, 'Exception occurred at scope %s' % (id))
+                if len(rc) != 0:
+                     sibqueues.extend(rc)  
+            sop(m, 'Exit return %s items' % (len(sibqueues)))
+            return sibqueues
+            
+        def getsibtopics():
+            m = 'getsibtopics:'
+            sop(m, 'Begin.')
+            scopes = getScopes()
+            sibtopics = []
+            for scope in scopes:
+                 id = AdminConfig.getid(scope)
+                 rc = []
+                 try:
+                      rc = AdminTask.listSIBJMSTopics(id).split(lf)
+                 except:
+                      sop(m, 'Exception occurred at scope %s' % (id))
+                 if len(rc) != 0:
+                      sibtopics.extend(rc)  
+            return sibtopics
+            
+        def getDSByJNDI(jndi):
+            if jndi == None or jndi == '':
+                 return
+            for ds in datasources:
+                 if ds != None and jndi == AdminConfig.showAttribute(ds, 'jndiName'):
+                      return ds  
+            return
+            
+        def getQueueByJNDI(jndi):
+            m = 'getQueueByJNDI:'
+            sop(m, 'Begin. jndi = %s' % (jndi))
+            if jndi == None or jndi == '':
+                 sop(m, 'Exit.')
+                 return
+            for queue in destinations:
+                 if queue != None and queue != '':
+                      type = ''
+                      try:
+                           type = AdminConfig.showAttribute(queue, 'type')
+                      except:
+                           sop(m, '%s is not GenericJMSDestination type' % (queue))
+                      if type == 'QUEUE' and jndi == AdminConfig.showAttribute(queue, 'jndiName'):
+                           sop(m, 'Exit.')
+                           return queue
+            for queue in AdminConfig.list('WASQueue').split(lf):
+                 if queue != None and queue != '' and jndi == AdminConfig.showAttribute(queue, 'jndiName'):
+                      sop(m, 'Exit.')
+                      return queue
+            for queue in AdminConfig.list('MQQueue').split(lf):
+                 if queue != None and queue != '' and jndi == AdminConfig.showAttribute(queue, 'jndiName'):
+                      sop(m, 'Exit.')
+                      return queue
+            for queue in getsibqueues():
+                 if queue != None and queue != '' and jndi == AdminConfig.showAttribute(queue, 'jndiName'):
+                      sop(m, 'Exit.')
+                      return queue  
+            sop(m, 'Exit.')
+            return
+            
+        def getTopicByJNDI(jndi):
+            m = 'getTopicByJNDI:'
+            sop(m, 'Begin. jndi = %s' % (jndi))
+            if jndi == None or jndi == '':
+                 sop(m, 'Exit.')
+                 return
+            for topic in getsibtopics():
+                 if topic != None and topic != '' and jndi == AdminConfig.showAttribute(topic, 'jndiName'):
+                      sop(m, 'Exit.')
+                      return topic
+            for topic in destinations:
+                 if topic != None and topic != '':
+                      type = ''
+                      try:
+                           type = AdminConfig.showAttribute(topic, 'type')
+                      except:
+                           sop(m, '%s is not GenericJMSDestination type' % (topic))
+                      if type == 'TOPIC' and jndi == AdminConfig.showAttribute(topic, 'jndiName'):
+                           sop(m, 'Exit.')
+                           return topic
+            for topic in AdminConfig.list('WASTopic').split(lf):
+                 if topic != None and topic != '' and jndi == AdminConfig.showAttribute(topic, 'jndiName'):
+                      sop(m, 'Exit.')
+                      return topic
+            for topic in AdminConfig.list('MQTopic').split(lf):
+                 if topic != None and topic != '' and jndi == AdminConfig.showAttribute(topic, 'jndiName'):
+                      sop(m, 'Exit.')
+                      return topic  
+            sop(m, 'Exit.')
+            return
 
     
     
