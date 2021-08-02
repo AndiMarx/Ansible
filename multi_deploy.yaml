@@ -18,10 +18,17 @@
     was_temp: "/tmp"
     was_war: fahrradpass-war-4.0.0.war
     
+  #tasks: 
+  #- name: create python script
+  #  file:
+  #    path: "{{ was_temp }}/deploy.py"
+  #    state: touch
+  #    content: | 
+  #      Hallihallo 
+        
   tasks: 
   - name: create python script
-    file:
-      path: "{{ was_temp }}/deploy.py"
-      state: touch
+    copy:
+      dest: "{{ was_temp }}/deploy.py"      
       content: | 
         Hallihallo 
