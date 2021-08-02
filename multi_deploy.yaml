@@ -83,6 +83,61 @@
               str ='false'
            # return original value if not Yes or No
            return str
+       
+       def byte_array_to_string(arr):
+           str = ''
+           for b in arr:
+             str += chr(b)
+           return str
+       
+       def writeReport(m, filePath):
+           report_file = open(filePath,'w')
+           for list in m.items():
+             str = "%s#%s\n" % (list[0],list[1])
+             report_file.write( str )
+           report_file.close()
+           
+       def checkResourceExists(name, type):
+           if getMBean('/' + type + 's/' + name ) is None:
+             return false
+           else:
+             return true
+             
+       def checkAppExists(name):
+           found = false
+           try:
+             cd('/')
+             for app in cmo.getAppDeployments():
+               appName = app.getName()
+               cd('/AppDeployments/' + appName)
+               applicationName = get('ApplicationName')
+               if  applicationName == name:
+                 found = true
+                 break
+           except Exception:
+             return found
+           return found
+       
+       def getAppMBean(name,version):
+           mb = None
+           try:
+             cd('/')
+             for app in cmo.getAppDeployments():
+               appName = app.getName()
+               cd('/AppDeployments/' + appName)
+               applicationName = get('ApplicationName')
+               if  applicationName == name:
+                 if  version == '':
+                   mb = getMBean('/AppDeployments/' + appName)
+                   break
+                 else:
+                   appVersion = get('VersionIdentifier')
+                   if appVersion == version:
+                     mb = getMBean('/AppDeployments/' + appName)
+                     break
+           except Exception:
+             return mb
+           return mb
 
     
     
