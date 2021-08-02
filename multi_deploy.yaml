@@ -21,6 +21,8 @@
     mytext: |
       import sys, string
       def rf_trim_comma(str):
+          if str[:1] == ',':
+            str = str[1:len(str)]
     
     
          
