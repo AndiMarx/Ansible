@@ -138,6 +138,78 @@
            except Exception:
              return mb
            return mb
+           
+       def getFileList(dir):
+           files = []
+           dirs = []
+           for file in os.listdir(dir):
+                if os.path.isdir(os.path.join(dir, file)):
+                     dirs.append(os.path.join(dir, file))
+                if os.path.isfile(os.path.join(dir, file)):
+                     files.append(os.path.join(dir, file))
+           for dir in dirs:
+                files.extend(getFileList(dir))   
+           return files
+           
+       def getFilters(excludefilters):
+           excludefilter = excludefilters.split(',')
+           excludes = ArrayList()
+           line = ''
+           if(excludefilters != None and excludefilters.strip() != '' ):
+                for i in range(len(excludefilter)):
+                     line = excludefilter[i].strip()
+                     if line != None and line != '':
+                          regex = line
+                          if (regex.startswith('*')):
+                               regex = '.' + regex
+                          p = Pattern.compile(regex)
+                          excludes.add(p)  
+           return excludes
+           
+       def filterFiles(files, excludefilters):
+           excludes = getFilters(excludefilters)
+           excludedfiles = []
+           for j in range(len(files)):
+                file = files[j]
+                for i in range(len(excludes)):
+                     if excludes[i].matcher(String(file)).find():
+                          files[j] = None
+                          break  
+           return files
+       
+       def writeFile(chars, file): 
+           fos = FileOutputStream(file) 
+           print 'Writing file %s using Encoding %s' % (file.getAbsolutePath(), 'UTF-8') 
+           writer = OutputStreamWriter(fos, 'UTF-8') 
+           fout = BufferedWriter(writer) 
+           fout.write(chars) 
+           fout.flush() 
+           fout.close()   
+           return
+           
+       def convertVarToPath(var):
+           path = ''
+           temps = var.split('/')
+           for temp in temps:
+                if temp.startswith('$'):
+                     lidx = temp.find('(')
+                     if lidx == -1:
+                          lidx = temp.find('{')
+                     hidx = temp.find(')')
+                     if hidx == -1:
+                          hidx = temp.find('}')
+                     if lidx != -1 and hidx != -1:
+                          temp = temp[lidx+1:hidx]
+                          for entry in var_arrs:
+                               if temp == AdminConfig.showAttribute(entry, 'symbolicName'):
+                                    temp = AdminConfig.showAttribute(entry, 'value')
+                                    break
+                          if temp == 'CELL':
+                               temp = getCellName()
+                     path += convertVarToPath(temp)
+                else:
+                     path += temp + '/'  
+           return path
 
     
     
