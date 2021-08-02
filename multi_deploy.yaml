@@ -339,6 +339,72 @@
                       return topic  
             sop(m, 'Exit.')
             return
+            
+        def getEnvVarByJNDI(jndi):
+            if jndi == None or jndi == '':
+                 return
+            for entry in var_arrs:
+                 if entry != None and entry != '' and jndi == AdminConfig.showAttribute(entry, 'symbolicName'):
+                      return entry  
+            return
+            
+        def zipFiles(files, path, archivepath, guid, retarr):
+            zip = ZipOutputStream(FileOutputStream(os.path.normpath(os.path.join(archivepath, guid, r'snap.zip'))))
+            for f in files:
+                 if f != None:
+                      if f[len(path)+1:] in retarr and os.path.isfile(f):
+                           jarFile = JarInputStream(FileInputStream(os.path.normpath(f)))
+                           jarEntry = jarFile.getNextJarEntry()
+                           while (jarEntry != None):
+                                entry = ZipEntry('Application' + f[len(path):] + '/' + jarEntry.getName())
+                                zip.putNextEntry(entry)
+                                if jarEntry.isDirectory() != True:
+                                     buf = jarray.zeros(8192, 'b')
+                                     ret = jarFile.read(buf)
+                                     while (ret != -1):
+                                          zip.write(buf, 0, ret)
+                                          ret = jarFile.read(buf)
+                                zip.closeEntry()
+                                jarEntry = jarFile.getNextJarEntry()
+                           jarFile.close()
+                      else:
+                           entry = ZipEntry('Application' + f[len(path):])
+                           zip.putNextEntry(entry)
+                           if (os.path.isdir(f) != True):
+                                buf = jarray.zeros(8192, 'b')
+                                fin = BufferedInputStream(FileInputStream(f))
+                                ret = fin.read(buf)
+                                while (ret != -1):
+                                     zip.write(buf, 0, ret)
+                                     ret = fin.read(buf)
+                                fin.close()
+                           zip.closeEntry()
+            zip.close()      
+            return
+            
+        def asHex(buf):
+            strbuf = StringBuffer(len(buf) * 2)
+            for b in buf:
+                 strbuf.append(HEXES[(b & 0xF0) >> 4]).append(HEXES[(b & 0x0F)])  
+            return strbuf.toString()
+            
+        def calcHash(file, hashType):
+            buf = jarray.zeros(maxBlockSize, 'b')
+            md = MessageDigest.getInstance(hashType)
+            md.reset()
+            if (os.path.isfile(file)):
+                 fin = BufferedInputStream(FileInputStream(file))
+                 try:
+                      size = fin.read(buf)
+                      while (size != -1):
+                           md.update(buf, 0, size)
+                           size = fin.read(buf)
+                 finally:
+                      fin.close()
+             else:
+                  md.update(String(file).getBytes(), 0, String(file).length())
+             hash = md.digest()  
+             return asHex(hash)
 
     
     
