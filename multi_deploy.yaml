@@ -25,6 +25,6 @@
          
   tasks: 
   - copy: create python script  
-      dest: "{{ was_temp }}/deploy.py" 
+      dest: "{{ was_temp }}"/deploy.py 
       content: "{{ mytext }}"
     
