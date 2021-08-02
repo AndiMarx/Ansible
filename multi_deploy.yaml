@@ -11,7 +11,7 @@
   
   vars:
     stage: s01ttwaslb1
-    was_port: 8879
+    #was_port: 8879
     was_cluster: "WAS_Cluster01"
     was_user: wasadmin
     was_password: "8hebngrwie!"
