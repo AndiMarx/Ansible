@@ -577,4 +577,11 @@
     copy:
       dest: "{{ py_temp }}"
       content: "{{ mytext }}"
+      
+  - name: run python script    
+      command: "{{ py_temp }}"       
+      register: pyOut
+  - debug:
+      msg: "{{ pyOut.stdout_lines }}"
+      verbosity: 4
     
