@@ -14,7 +14,7 @@
     was_port: 8879
     was_cluster: "WAS_Cluster01"
     was_user: wasadmin
-    was_password: "8hebngrwie!"
+    was_password: '8hebngrwie!'
     was_temp: "/tmp"
     py_temp: "/tmp/deploy.py"
     was_war: fahrradpass-war-4.0.0.war
