@@ -453,7 +453,7 @@
          return rc
          
       def _getTargetsForApplication(appname, targettype):
-          m = 'getTargetsForApplication:'
+         m = 'getTargetsForApplication:'
          sop(m,'Entry. appname=%s targettype=%s' % ( appname, targettype ))
          # Check parameter.
          if 'ClusteredTarget' != targettype and 'ServerTarget' != targettype:
