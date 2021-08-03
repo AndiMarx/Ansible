@@ -11,13 +11,15 @@
   
   vars:
     stage: s01ttwaslb1
-    #was_port: 8879
+    was_port: 8879
     was_cluster: "WAS_Cluster01"
     was_user: wasadmin
     was_password: "8hebngrwie!"
     was_temp: "/tmp"
     py_temp: "/tmp/deploy.py"
     was_war: fahrradpass-war-4.0.0.war
+    was_admin_path: "/app/IBM/WebSphere9/AppServer/profiles/wasDMgr01/bin"
+    
     mytext: |
       import sys, string
       def rf_trim_comma(str):
@@ -586,7 +588,7 @@
  #     mode: "0777"
       
   - name: run python script    
-    command: "{{ py_temp }}"       
+    command: "{{ was_admin_path }}/wsadmin.sh" -host "{{ stage }}" -port "{{ was_port }}" -user "{{ was_user }}" -password "{{ was_password }}" -f "{{ /tmp/deploy.py }}"       
     register: pyOut
   - debug:
       msg: "{{ pyOut.stdout_lines }}"
