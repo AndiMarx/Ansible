@@ -554,7 +554,7 @@
           nodes_and_servers = ''
         if clusternames == None:
           clusternames = ''
-        installApplication('/tmpfahrradpass-war-4.0.0.war'.strip(), nodes_and_servers, clusternames, options)
+        installApplication('/tmp/fahrradpass-war-4.0.0.war'.strip(), nodes_and_servers, clusternames, options)
       else:
         print 'Neither servers-nodes or clusters are given, therefore the job finishes without doing anything'
       
