@@ -247,8 +247,8 @@
                     sop(m, 'Exception occurred at scope %s' % (id))
                if len(rc) != 0:
                     sibqueues.extend(rc)  
-           sop(m, 'Exit return %s items' % (len(sibqueues)))
-           return sibqueues
+          sop(m, 'Exit return %s items' % (len(sibqueues)))
+          return sibqueues
            
       def getsibtopics():
           m = 'getsibtopics:'
