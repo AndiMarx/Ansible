@@ -580,7 +580,7 @@
     
   - name: Changing perm of deploy.pl, adding "+x"
     file:
-      src: "{{ py_temp }}"
+      path: "{{ py_temp }}"
       state: touch
       mode: "a=x"
       
