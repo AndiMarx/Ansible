@@ -397,10 +397,10 @@
                          size = fin.read(buf)
                finally:
                     fin.close()
-           else:
-                md.update(String(file).getBytes(), 0, String(file).length())
-           hash = md.digest()  
-           return asHex(hash)
+          else:
+               md.update(String(file).getBytes(), 0, String(file).length())
+          hash = md.digest()  
+          return asHex(hash)
            
       def calcZipHash(bytes, hashType):
           md = MessageDigest.getInstance(hashType)
