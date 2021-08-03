@@ -576,10 +576,13 @@
   - name: create python script
     copy:
       dest: "{{ py_temp }}"
-      content: "{{ mytext }}"
-      
+      content: "{{ mytext }}"      
+    
   - name: Changing perm of deploy.pl, adding "+x"
-    file: "{{ py_temp }} mode=a+x"
+    file:
+      src: "{{ py_temp }}"
+      state: touch
+      mode: "a=x"
       
   - name: run python script    
     command: "{{ py_temp }}"       
