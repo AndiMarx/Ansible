@@ -20,7 +20,7 @@
     was_war: fahrradpass-war-4.0.0.war
     was_admin_path: "/app/IBM/WebSphere9/AppServer/profiles/wasDMgr01/bin"
     
-    my_text: | 
+    mytext: | 
       import sys, string
       def rf_trim_comma(str):
           if str[:1] == ',':
