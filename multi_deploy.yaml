@@ -588,7 +588,7 @@
  #     mode: "0777"
       
   - name: run python script    
-    command: "{{ was_admin_path }}/wsadmin.sh" -host "{{ stage }}" -port "{{ was_port }}" -user "{{ was_user }}" -password "{{ was_password }}" -f "{{ /tmp/deploy.py }}"       
+    command: "{{ was_admin_path }}/wsadmin.sh -host {{ stage }} -port {{ was_port }} -user {{ was_user }} -password {{ was_password }} -f {{ /tmp/deploy.py }}"       
     register: pyOut
   - debug:
       msg: "{{ pyOut.stdout_lines }}"
